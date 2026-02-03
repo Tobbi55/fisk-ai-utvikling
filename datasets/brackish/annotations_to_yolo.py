@@ -1,4 +1,5 @@
 """Converts the ground truth annotations from AAU Bounding Box annotation format to YOLO format"""
+
 import argparse
 import os
 import pathlib

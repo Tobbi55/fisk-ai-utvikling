@@ -1,0 +1,7 @@
+https://github.com/NINAnor/fisk-ai/releases/download/v0.1.0/v8m-classes-augmented.pt
+https://github.com/NINAnor/fisk-ai/releases/download/v0.1.0/v8s-640-classes-augmented-backgrounds.pt
+https://github.com/NINAnor/fisk-ai/releases/download/v0.1.0/yolov8l.pt
+https://github.com/NINAnor/fisk-ai/releases/download/v0.1.0/yolov8m.pt
+https://github.com/NINAnor/fisk-ai/releases/download/v0.1.0/yolov8n.pt
+https://github.com/NINAnor/fisk-ai/releases/download/v0.1.0/yolov8s.pt
+https://github.com/NINAnor/fisk-ai/releases/download/v0.1.0/yolov8x.pt

@@ -3,7 +3,7 @@
 import re
 from pathlib import Path
 
-with open("annotated_videos.txt", "r") as f:
+with open("annotated_videos.txt") as f:
     annotated_videos = f.readlines()
 
 
@@ -35,6 +35,5 @@ for video in annotated_videos:
     processed_videos += [(video_title, video_folder)]
 
 
-for (video_title, video_folder) in processed_videos:
-
+for video_title, video_folder in processed_videos:
     print(video_title + "," + video_folder)

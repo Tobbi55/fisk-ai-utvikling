@@ -1,17 +1,12 @@
 # pylint: skip-file
 # mypy: ignore-errors
-import concurrent.futures
-import hashlib
-import os
 import pickle
-import queue
 from pathlib import Path
 
 import cv2
-import ffmpeg
 import numpy as np
 import tqdm
-from imagehash import ImageHash, dhash, phash
+from imagehash import ImageHash, phash
 from PIL import Image
 
 

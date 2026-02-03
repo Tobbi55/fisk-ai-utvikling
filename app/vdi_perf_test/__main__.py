@@ -38,7 +38,7 @@ def perform_test(
 ) -> None:
     stop_event = threading.Event()
     with Timer(f"Processing video (batch_size={batch_size}, device={DEVICE})"):
-        frames_with_fish = detection.process_video(
+        frames_with_fish = detection.process_video(  # noqa: F841
             model=model,
             video_path=VIDEO_INPUT,
             batch_size=batch_size,

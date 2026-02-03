@@ -1,4 +1,5 @@
 """Main file for our application"""
+
 import logging
 import os
 from logging.handlers import TimedRotatingFileHandler

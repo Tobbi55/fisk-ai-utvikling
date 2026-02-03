@@ -1,7 +1,9 @@
 """Video processor module. Contains functions for processing videos."""
+
+from collections.abc import Callable
 from fractions import Fraction
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Any
 
 import av
 import av.datasets
@@ -20,7 +22,7 @@ from app.video_processor import Detection
 logger = get_logger()
 
 
-def color_to_hex(color: Tuple[int, int, int]) -> str:
+def color_to_hex(color: tuple[int, int, int]) -> str:
     """Converts a color tuple to a hex string."""
     return f"0x{color[0]:02x}{color[1]:02x}{color[2]:02x}"
 
@@ -33,8 +35,8 @@ class Annotator:  # pylint: disable=too-few-public-methods
 
     def __init__(
         self,
-        frame_size: Tuple[int, int],
-        color: Tuple[int, int, int] = (255, 0, 0),
+        frame_size: tuple[int, int],
+        color: tuple[int, int, int] = (255, 0, 0),
         line_width: int | None = None,
         font_size: int | None = None,
     ) -> None:
@@ -50,7 +52,7 @@ class Annotator:  # pylint: disable=too-few-public-methods
         self.text_color = (255, 255, 255)
 
     def annotate(
-        self, frame: np.ndarray[Any, Any], detections: List[Detection]
+        self, frame: np.ndarray[Any, Any], detections: list[Detection]
     ) -> np.ndarray[Any, Any]:
         """
         Draws bounding boxes and labels on a frame for the specified detections.
@@ -152,11 +154,11 @@ def process_packet(  # pylint: disable=too-many-arguments
     video_stream: av.video.stream,
     output_container: av.container.output,
     output_stream: av.video.stream,
-    predictions: Dict[int, List[Detection]] | None,
+    predictions: dict[int, list[Detection]] | None,
     annotator: Annotator,
     pbar: tqdm,
     notify_progress: Callable[[int], None] | None = None,
-) -> Tuple[int | None, bool]:
+) -> tuple[int | None, bool]:
     """
     Process a packet of video frames, encode the frames,
     and mux the resulting packets into an output container.
@@ -179,9 +181,9 @@ def process_packet(  # pylint: disable=too-many-arguments
     for frame in packet.decode():
         if current_frame is None:
             current_frame = timestamp_to_frame(frame.pts, video_stream)
-            assert (
-                current_frame - start <= 0
-            ), f"Delta: {current_frame - start}, probably seeked past start frame"
+            assert current_frame - start <= 0, (
+                f"Delta: {current_frame - start}, probably seeked past start frame"
+            )
         else:
             current_frame += 1
 
@@ -211,12 +213,12 @@ def process_packet(  # pylint: disable=too-many-arguments
 
 
 def process_frame_ranges(  # pylint: disable=too-many-arguments
-    frame_ranges: List[Tuple[int, int]],
+    frame_ranges: list[tuple[int, int]],
     input_container: av.container.input,
     video_stream: av.video.stream,
     output_container: av.container.output,
     output_stream: av.video.stream,
-    predictions: Dict[int, List[Detection]] | None,
+    predictions: dict[int, list[Detection]] | None,
     annotator: Annotator,
     notify_progress: Callable[[int], None] | None = None,
 ) -> None:
@@ -266,8 +268,8 @@ def process_frame_ranges(  # pylint: disable=too-many-arguments
 def cut_video(
     input_path: Path,
     output_path: Path,
-    frame_ranges: List[Tuple[int, int]],
-    predictions: Dict[int, List[Detection]] | None = None,
+    frame_ranges: list[tuple[int, int]],
+    predictions: dict[int, list[Detection]] | None = None,
     notify_progress: Callable[[int], None] | None = None,
 ) -> None:
     """

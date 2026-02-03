@@ -3,6 +3,7 @@ Takes an imagelist as input and splits it into training/validation/test splits,
 according to the provided percentages.
 Outputs separate txt files for each split containing the image paths to the images in the splits.
 """
+
 import argparse
 import typing
 
@@ -39,7 +40,7 @@ def create_dataset_split(parsed_args: dict[str, typing.Any]) -> None:
     assert data_split_sum == 1.0, f"INVALID DATA SPLIT, {data_split_sum}"
 
     # Read input imagelist
-    with open(parsed_args["inputFile"], "r", encoding="UTF-8") as text_file:
+    with open(parsed_args["inputFile"], encoding="UTF-8") as text_file:
         filenames = text_file.read().split("\n")
 
     # Remove empty line in the end of imagelist file if present
@@ -48,9 +49,9 @@ def create_dataset_split(parsed_args: dict[str, typing.Any]) -> None:
     number_of_files = len(filenames)
 
     # Check that there are no duplicate frames
-    assert number_of_files == len(
-        set(filenames)
-    ), "Dublicate filenames in the provided imagelist"
+    assert number_of_files == len(set(filenames)), (
+        "Dublicate filenames in the provided imagelist"
+    )
 
     filenames_arr = np.asarray(filenames)
 

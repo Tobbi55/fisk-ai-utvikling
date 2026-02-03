@@ -1,5 +1,5 @@
 """_summary_"""
-import typing
+
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -22,7 +22,7 @@ class Common:
         OPEN_DIR = 1
         SAVE_FILE = 2
 
-    process: typing.Optional[QProcess] = None  # The process to be executed
+    process: QProcess | None = None  # The process to be executed
     process_path = r"app\dummy_script.py"  # The path to script executed
 
     # default window size

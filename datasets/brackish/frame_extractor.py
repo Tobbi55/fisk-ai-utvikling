@@ -1,4 +1,5 @@
 """Takes a set of videos and extracts the frames into separate folders"""
+
 import argparse
 import os
 import pathlib

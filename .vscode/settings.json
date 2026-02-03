@@ -1,6 +1,12 @@
 {
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
-    "python.formatting.provider": "black",
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        }
+    },
     "mypy.dmypyExecutable": "${workspaceFolder}\\.venv\\Scripts\\dmypy.exe",
 }

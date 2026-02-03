@@ -2,7 +2,7 @@
 
 import sys
 from types import ModuleType
-from typing import Any, Dict, Tuple
+from typing import Any
 
 from PyQt6.QtCore import QSettings
 
@@ -45,7 +45,7 @@ weights: str = "v8s-640-classes-augmented-backgrounds.pt"
 # ----------------------------------------------------------------------------- #
 
 # key: name, value: ((default) value, type)
-__entries: Dict[str, Tuple[Any, type]] = {}
+__entries: dict[str, tuple[Any, type]] = {}
 
 # Create __settings as QSettings and store it as ini in data folder
 __settings = QSettings("settings.ini", QSettings.Format.IniFormat)

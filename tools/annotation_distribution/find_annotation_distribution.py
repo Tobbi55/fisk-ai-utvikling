@@ -1,4 +1,5 @@
 """Script to find the distribution of annotations in a yolo dataset."""
+
 # pylint: disable=missing-function-docstring
 import csv
 from pathlib import Path
@@ -45,7 +46,7 @@ def get_annotation_distribution() -> list[tuple[str, int]]:
 
 
 def write_annotation_distribution_to_csv(
-    annotations_dist: list[tuple[str, int]]
+    annotations_dist: list[tuple[str, int]],
 ) -> None:
     with open("annotations_dist.csv", "w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)

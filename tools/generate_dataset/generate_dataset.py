@@ -12,10 +12,8 @@ import xml.etree.ElementTree as ET
 import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 import cv2
-import yaml
 from tqdm import tqdm
 
 CVAT_EXPORTS_FOLDER = Path(r"path\to\cvat\exports")
@@ -124,11 +122,11 @@ def extract_annotations(
 
 def parse_xml_annotation(
     xml_file: str,
-) -> Tuple[
+) -> tuple[
     str,
-    Tuple[int, int],
+    tuple[int, int],
     int,
-    Dict[int, Dict[str, List[Tuple[float, float, float, float]]]],
+    dict[int, dict[str, list[tuple[float, float, float, float]]]],
 ]:
     tree = ET.parse(xml_file)
     root: ET.Element = tree.getroot()
@@ -145,7 +143,7 @@ def parse_xml_annotation(
     frame_count = int(task.find("size").text)
 
     # dictionary to store annotations, with frame number as key
-    annotations: Dict[int, Dict[str, List[Tuple[float, float, float, float]]]] = {}
+    annotations: dict[int, dict[str, list[tuple[float, float, float, float]]]] = {}
 
     # Add image annotations
     for image in root.findall("image"):
@@ -271,7 +269,7 @@ def generate_yolo_dataset(
     extract_frames(video_path)
 
 
-def get_background_images(images: List[Path]) -> List[Path]:
+def get_background_images(images: list[Path]) -> list[Path]:
     # Count the number of background frames by counting the number of empty annotation files and images without annotations
     background_images = []
     for image in images:
@@ -281,8 +279,8 @@ def get_background_images(images: List[Path]) -> List[Path]:
     return background_images
 
 
-def adjust_background_images(images: List[Path]) -> List[Path]:
-    background_images: List[Path] = get_background_images(images)
+def adjust_background_images(images: list[Path]) -> list[Path]:
+    background_images: list[Path] = get_background_images(images)
 
     # Remove all background images from the list of images so we don't use them twice
     images = set(images) - set(background_images)
@@ -312,7 +310,7 @@ def adjust_background_images(images: List[Path]) -> List[Path]:
 
 
 def split_train_val(dataset_path: Path, train_split: float) -> None:
-    all_images: List[Path] = []
+    all_images: list[Path] = []
 
     # Collect all image paths from subfolders
     for folder in dataset_path.iterdir():

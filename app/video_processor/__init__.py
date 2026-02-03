@@ -1,4 +1,4 @@
-""" Video processor module. """
+"""Video processor module."""
 
 
 # TODO: Move this somewhere else

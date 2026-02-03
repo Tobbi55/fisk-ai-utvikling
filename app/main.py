@@ -5,7 +5,6 @@ import os
 import sys
 from pathlib import Path
 
-import qdarktheme
 from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget
@@ -129,10 +128,6 @@ def main() -> int:
     # Pass in sys.argv to allow command line arguments for your app.
     # If you know you won't use command line arguments QApplication([]) works too.
     app = QApplication(sys.argv)
-    # Apply the complete dark theme to your Qt App.
-    qdarktheme.setup_theme("auto")
-    # Default is "rounded".
-    # stylesheet = qdarktheme.setup_theme(corner_shape="sharp")
 
     window = MainWindow()
     window.show()  # IMPORTANT!!!!! Windows are hidden by default.

@@ -1,4 +1,5 @@
 """Widgets Panels for the application."""
+
 from dataclasses import dataclass
 
 from PyQt6.QtWidgets import QHBoxLayout, QMessageBox, QVBoxLayout

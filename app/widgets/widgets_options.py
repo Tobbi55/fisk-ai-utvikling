@@ -1,6 +1,7 @@
 """_summary_"""
+
 import sys
-from typing import Callable, List
+from collections.abc import Callable
 
 from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
@@ -471,7 +472,7 @@ Reducing this number will improve performance when there are a lot of fish frame
         return frame_buffer_spinbox
 
     def __create_weights_dropdown(self) -> DropDownWidget:
-        def get_available_weights() -> List[str]:
+        def get_available_weights() -> list[str]:
             """Gets available weights from the weights folder"""
             weights_folder = Common.weights_folder
             weights = [weight.name for weight in weights_folder.glob("*.pt")]

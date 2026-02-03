@@ -12,8 +12,9 @@ x-common: &common
     DISPLAY: $DISPLAY
   volumes:
     - /tmp/.X11-unix:/tmp/.X11-unix
-    - ./input:/app/input
-    - ./output:/app/output
+    - ./input:/app/data/input
+    - ./output:/app/data/output
+    - ./data/models:/app/data/models:ro
 
 services:
   app:
@@ -24,7 +25,7 @@ services:
     <<: *common
     profiles:
       - test
-    command: poetry run python -m app.vdi_perf_test
+    command: pixi run test
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs

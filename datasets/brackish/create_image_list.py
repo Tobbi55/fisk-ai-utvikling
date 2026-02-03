@@ -1,4 +1,5 @@
 """Takes a path to an image folder and saves all absolute paths as separate lines in a txt file"""
+
 import argparse
 import os
 import typing

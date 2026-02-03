@@ -1,4 +1,5 @@
 """Main module for detection."""
+
 import argparse
 import sys
 import threading

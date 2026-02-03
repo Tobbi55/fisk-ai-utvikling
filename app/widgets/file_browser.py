@@ -1,6 +1,7 @@
 """Creates a widget for browsing files depending on the mode"""
+
 import os
-from typing import ClassVar, List
+from typing import ClassVar
 
 from PyQt6.QtCore import QDir, pyqtSignal
 from PyQt6.QtWidgets import QFileDialog, QHBoxLayout, QLineEdit, QPushButton, QWidget
@@ -17,7 +18,7 @@ class FileBrowser(QWidget):  # pylint: disable=too-few-public-methods
     """
 
     # Creates empty list for filepaths
-    filepaths: List[str] = []
+    filepaths: list[str] = []
     path_changed: ClassVar[pyqtSignal] = pyqtSignal(str)
 
     def __init__(

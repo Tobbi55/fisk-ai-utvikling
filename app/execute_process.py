@@ -1,4 +1,5 @@
 """Progress bar when loading AI models."""
+
 import re
 import typing
 

@@ -1,43 +1,93 @@
-[tool.poetry]
+[project]
 name = "bachelor-oppgave-nina"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
-authors = ["Benjamin Letnes Bjerken <benjabj@stud.ntnu.no>", "Daniel Hao Huynh <daniehhu@stud.ntnu.no>", "Lars Blütecher Holter <larsbho@stud.ntnu.no>", "Lillian Alice Wangerud <lilliaaw@stud.ntnu.no>"]
-license = "GPLv3"
+authors = [
+    {name = "Benjamin Letnes Bjerken", email = "benjabj@stud.ntnu.no"},
+    {name = "Daniel Hao Huynh", email = "daniehhu@stud.ntnu.no"},
+    {name = "Lars Blütecher Holter", email = "larsbho@stud.ntnu.no"},
+    {name = "Lillian Alice Wangerud", email = "lilliaaw@stud.ntnu.no"},
+]
+maintainers = [
+    {name = "Francesco Frassinelli", email = "francesco.frassinelli@nina.no"},
+]
+license = "GPL-3.0-or-later"
 readme = "README.md"
-packages = [{include = "app"}]
 
-[tool.poetry.dependencies]
-python = ">=3.10,<3.12"
-PyQt6 = "~=6.5.0"
-pyqtdarktheme = "^2.1.0"
-ultralytics = "~=8.2.0"
-tqdm = "^4.64.1"
-ffmpeg-python = "^0.2.0"
-aspose-cells = "^23.2.0"
-aspose-cells-python = "^23.2.0"
-fpdf = "^1.7.2"
-torchvision = "^0.19.0"
-poethepoet = "^0.18.1"
-xlsxwriter = "^3.1.0"
-av = "^12.3.0"
+requires-python = ">=3.10, <3.12"
+dependencies = [
+    "PyQt6~=6.5.0",
+    "ultralytics~=8.2.0",
+    "opencv-python-headless",
+    "tqdm~=4.64.1",
+    "ffmpeg-python~=0.2.0",
+    "aspose-cells~=23.2.0",
+    "aspose-cells-python~=23.2.0",
+    "fpdf~=1.7.2",
+    "torchvision>=0.25.0,<0.26",
+    "xlsxwriter~=3.1.0",
+    "av~=12.3.0",
+]
 
-[tool.poetry.group.dev.dependencies]
-mypy = "^1.0.0"
-pylint = "^2.16.2"
-black = "^23.1.0"
-pre-commit = "^3.0.4"
-pytest = "^7.2.2"
-ipykernel = "^6.22.0"
-sympy = "^1.11.1"
+[project.optional-dependencies]
+dev = [
+    "ty == 0.0.14",
+    "ruff >= 0.1.0, < 1.0.0",
+    "pytest >= 7.2.2, < 8.0.0",
+    "ipykernel >= 6.22.0, < 7.0.0",
+    "sympy >= 1.11.1, < 2.0.0",
+]
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.setuptools]
+packages = ["app"]
 
-[tool.poe.tasks]
-# Thanks to https://github.com/Interpause/nicepipe/blob/937fb4b81bb6ef6d4c7bfbeaf3fe1998e63110ea/pyproject.toml#L9
-torch-cuda = "pip install torch torchvision torchaudio --force-reinstall --no-deps --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cu117"
+[tool.ruff]
+target-version = "py310"
 
-[tool.isort]
-profile = "black"
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "PL",  # pylint
+    "W",   # pycodestyle warnings
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",     # line too long
+    "PLR0913",  # too many arguments
+    "PLR2004",  # magic value comparison
+]
+
+[tool.ty.rules]
+invalid-argument-type = "warn"
+invalid-assignment = "warn"
+invalid-method-override = "warn"
+invalid-return-type = "warn"
+invalid-type-arguments = "warn"
+invalid-type-form = "warn"
+possibly-missing-attribute = "warn"
+unresolved-attribute = "warn"
+unresolved-import = "warn"
+unsupported-operator = "warn"
+
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[tool.pixi.tasks]
+start = { cmd = "python -m app", env = { LD_LIBRARY_PATH = "$CONDA_PREFIX/lib:$LD_LIBRARY_PATH" } }
+fetch-models = "wget -nc -P data/models -i models.txt"
+vdi-perf-test = "python -m app.vdi_perf_test"
+test = "python -m app.vdi_perf_test"
+[tool.pixi.dependencies]
+xcb-util-cursor = "*"
+
+[tool.pixi.pypi-dependencies]
+bachelor-oppgave-nina = { path = ".", editable = true }
+
+[tool.pixi.feature.dev.pypi-dependencies]
+bachelor-oppgave-nina = { path = ".", editable = true, extras = ["dev"] }
+
+[tool.pixi.environments]
+dev = ["dev"]

@@ -1,13 +1,12 @@
 """Detection window widget."""
+
 import io
 import os
-import sys
 import threading
 import time
 from contextlib import redirect_stdout
 from datetime import timedelta
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 import cv2
 import torch
@@ -135,10 +134,10 @@ class DetectionWorker(QThread):
                     self.log("Could not write report. Please close the report file.")
 
     def tensors_to_predictions(
-        self, tensors: List[torch.Tensor]
-    ) -> Dict[int, List[Detection]]:
+        self, tensors: list[torch.Tensor]
+    ) -> dict[int, list[Detection]]:
         """Convert the tensors to a dictionary of frame number to detections."""
-        detections: Dict[int, List[Detection]] = {}
+        detections: dict[int, list[Detection]] = {}
         for frame, tensor in enumerate(tensors):
             # annotator.text((32, 32), text, txt_color=(0, 255, 255))
             detections[frame] = []
@@ -157,8 +156,8 @@ class DetectionWorker(QThread):
         return detections
 
     def __add_buffer_to_ranges(
-        self, frame_ranges: List[Tuple[int, int]], video_path: Path
-    ) -> List[Tuple[int, int]]:
+        self, frame_ranges: list[tuple[int, int]], video_path: Path
+    ) -> list[tuple[int, int]]:
         """Add buffer time before and after each frame range and merge overlapping ranges"""
 
         cap = cv2.VideoCapture(str(video_path))
@@ -175,7 +174,7 @@ class DetectionWorker(QThread):
         ]
 
         # Merge overlapping frame ranges
-        merged_ranges: List[Tuple[int, int]] = []
+        merged_ranges: list[tuple[int, int]] = []
         for start_frame, end_frame in frame_ranges_with_buffer:
             if not merged_ranges or start_frame > merged_ranges[-1][1]:
                 merged_ranges.append((start_frame, end_frame))
@@ -336,9 +335,7 @@ class DetectionWorker(QThread):
             self.update_time_prediction_sig.emit(f"Total Time Left: {time_left_str}")
 
 
-class DetectionWindow(
-    QDialog
-):  # pylint: disable=too-few-public-methods,too-many-instance-attributes
+class DetectionWindow(QDialog):  # pylint: disable=too-few-public-methods,too-many-instance-attributes
     """Detection window widget."""
 
     def __init__(

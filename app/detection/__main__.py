@@ -1,4 +1,5 @@
 """Detection main"""
+
 import sys
 
 from .main import main

@@ -1,8 +1,9 @@
-"""Yolov8 class for running inference on video. """
+"""Yolov8 class for running inference on video."""
+
 import copy
 import os
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 import torch
@@ -30,8 +31,8 @@ class BatchYolov8:  # pylint: disable=too-many-instance-attributes
         iou_thres: float = 0.5,
         augment: bool = False,
         agnostic_nms: bool = False,
-        classes: Optional[List[str]] = None,
-        colors: Optional[List[Tuple[int, int, int]]] = None,
+        classes: list[str] | None = None,
+        colors: list[tuple[int, int, int]] | None = None,
     ) -> None:
         try:
             self.device = select_device(device)
@@ -56,7 +57,7 @@ class BatchYolov8:  # pylint: disable=too-many-instance-attributes
             else self.model.names
         )
         if colors is None:
-            self.colors: List[Tuple[int, int, int]] = [
+            self.colors: list[tuple[int, int, int]] = [
                 (
                     np.random.randint(0, 255),
                     np.random.randint(0, 255),
@@ -81,7 +82,7 @@ class BatchYolov8:  # pylint: disable=too-many-instance-attributes
             self.burn()
 
     def prepare_images(
-        self, img_s: List[np.ndarray[Any, Any]] | np.ndarray[Any, Any]
+        self, img_s: list[np.ndarray[Any, Any]] | np.ndarray[Any, Any]
     ) -> Tensor:
         """Prepare a batch of images for inference by normalizing and reshaping them.
 
@@ -102,7 +103,7 @@ class BatchYolov8:  # pylint: disable=too-many-instance-attributes
 
             img_to_send = self.pad_batch_of_images(img_list)
         elif isinstance(img_s, np.ndarray):
-            img_to_send = self.reshape_copy_img((np.ndarray(img_s)))
+            img_to_send = self.reshape_copy_img(np.ndarray(img_s))
         else:
             print(type(img_s), " is not supported")
             raise RuntimeError("Not supported type")
@@ -134,11 +135,11 @@ class BatchYolov8:  # pylint: disable=too-many-instance-attributes
 
     def predict_batch(
         self,
-        img0s: List[Any],
+        img0s: list[Any],
         imgs: torch.Tensor,
-        max_objects: Optional[Dict[Any, Any]] = None,
+        max_objects: dict[Any, Any] | None = None,
         max_detections: int = 300,
-    ) -> List[Any]:
+    ) -> list[Any]:
         """Predict on a batch of images.
 
         Args:
@@ -179,7 +180,7 @@ class BatchYolov8:  # pylint: disable=too-many-instance-attributes
 
         return batch_output
 
-    def prepare_image(self, original_img: np.ndarray[Any, Any] | List[Any]) -> Tensor:
+    def prepare_image(self, original_img: np.ndarray[Any, Any] | list[Any]) -> Tensor:
         """Prepare image for inference by normalizing and reshaping.
 
         Args:
@@ -213,8 +214,8 @@ class BatchYolov8:  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def pad_batch_of_images(
-        img_list: List[Any], return_np: bool = True
-    ) -> np.ndarray[Any, Any] | List[Any]:
+        img_list: list[Any], return_np: bool = True
+    ) -> np.ndarray[Any, Any] | list[Any]:
         """Pad a batch of images to the same size.
 
         Args:
@@ -253,7 +254,7 @@ class BatchYolov8:  # pylint: disable=too-many-instance-attributes
             return np.array(padded_img_list)
         return padded_img_list
 
-    def min_max_list(self, det: Any) -> Optional[List[Any]]:
+    def min_max_list(self, det: Any) -> list[Any] | None:
         """Create a list of bounding boxes from the detection.
 
         Args:
@@ -289,8 +290,8 @@ class BatchYolov8:  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def max_objects_filter(
-        min_max_list: List[Any], max_dict: Dict[Any, Any], name_key: str = "name"
-    ) -> List[Any]:
+        min_max_list: list[Any], max_dict: dict[Any, Any], name_key: str = "name"
+    ) -> list[Any]:
         """Filter a list of bounding boxes based on the maximum number of objects.
 
         Args:

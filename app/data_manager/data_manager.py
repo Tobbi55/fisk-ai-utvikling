@@ -1,4 +1,5 @@
 """Stores data about video and detections in local database"""
+
 import datetime
 import os
 import sqlite3
@@ -7,7 +8,6 @@ import traceback
 import typing
 from pathlib import Path
 from types import TracebackType
-from typing import Type
 
 import cv2
 
@@ -42,7 +42,7 @@ class DataManager:
 
     def __exit__(
         self,
-        exc_type: Type[BaseException] | None,  # pylint: disable=unused-argument
+        exc_type: type[BaseException] | None,  # pylint: disable=unused-argument
         exc_value: BaseException | None,  # pylint: disable=unused-argument
         trace_back: TracebackType | None,  # pylint: disable=unused-argument
     ) -> None:
@@ -90,7 +90,6 @@ class DataManager:
             # opens the sql file with the tables that are going to be created
             with open(
                 "app/data_manager/sqlite_tables.sql",
-                "r",
                 encoding="ascii",
                 errors="ignore",
             ) as sqlite_file:
@@ -207,7 +206,7 @@ class DataManager:
             return "00:00:00"
 
     def add_detection_data(
-        self, video_id: Path, detections: typing.List[typing.Tuple[int, int]]
+        self, video_id: Path, detections: list[tuple[int, int]]
     ) -> None:
         """Adds data about detections for one video
 
@@ -239,7 +238,7 @@ class DataManager:
             timestamped_detections = self.get_timestamps(video_id, detections)
 
             # Setting up list of detections with video id and detection id
-            detections_list: typing.List[typing.Tuple[str, str, str]] = []
+            detections_list: list[tuple[str, str, str]] = []
             for detection in timestamped_detections:
                 detections_list.append((str(video_id),) + detection)
 
@@ -282,7 +281,7 @@ class DataManager:
             print("Error while checking for sqlite table", error)
             return False
 
-    def get_video_data(self, video_search: typing.List[str]) -> typing.List[typing.Any]:
+    def get_video_data(self, video_search: list[str]) -> list[typing.Any]:
         """Returns data about the video
 
         Returns:
@@ -318,7 +317,7 @@ class DataManager:
             print("Failed to read data from sqlite table", error)
             return []
 
-    def get_data(self, video_search: typing.List[str]) -> typing.List[typing.Any]:
+    def get_data(self, video_search: list[str]) -> list[typing.Any]:
         """Returns all the data necessary to write a report
 
         Args:
@@ -368,8 +367,8 @@ class DataManager:
         return float(cap.get(cv2.CAP_PROP_FPS))
 
     def get_timestamps(
-        self, path: Path, ranges: typing.List[typing.Tuple[int, int]]
-    ) -> typing.List[typing.Tuple[str, str]]:
+        self, path: Path, ranges: list[tuple[int, int]]
+    ) -> list[tuple[str, str]]:
         """Gets the timestamps for when a frame occurs in the video
 
         Args:
@@ -386,7 +385,7 @@ class DataManager:
             framerate = self.get_framerate(path)
 
             # iterated through the frame ranges to convert into timestamps
-            timestamps: typing.List[typing.Tuple[str, str]] = []
+            timestamps: list[tuple[str, str]] = []
             for start, end in ranges:
                 start_stamp = start / framerate
                 end_stamp = end / framerate

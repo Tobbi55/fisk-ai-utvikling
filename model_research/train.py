@@ -1,4 +1,5 @@
 """This is the main file to train the model."""
+
 import ultralytics
 from ultralytics import YOLO
 

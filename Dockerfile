@@ -1,19 +1,8 @@
-FROM python:3.11-bookworm
-
-ADD \
-    https://github.com/NINAnor/fisk-ai/releases/download/v0.1.0/v8m-classes-augmented.pt \
-    https://github.com/NINAnor/fisk-ai/releases/download/v0.1.0/v8s-640-classes-augmented-backgrounds.pt \
-    https://github.com/NINAnor/fisk-ai/releases/download/v0.1.0/yolov8l.pt \
-    https://github.com/NINAnor/fisk-ai/releases/download/v0.1.0/yolov8m.pt \
-    https://github.com/NINAnor/fisk-ai/releases/download/v0.1.0/yolov8n.pt \
-    https://github.com/NINAnor/fisk-ai/releases/download/v0.1.0/yolov8s.pt \
-    https://github.com/NINAnor/fisk-ai/releases/download/v0.1.0/yolov8x.pt \
-    /app/data/models/
+FROM ghcr.io/prefix-dev/pixi:latest
 
 # https://stackoverflow.com/questions/68036484/qt6-qt-qpa-plugin-could-not-load-the-qt-platform-plugin-xcb-in-even-thou#comment133288708_68058308
-RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
-    --mount=type=cache,sharing=locked,target=/var/lib/apt \
-    rm /etc/apt/apt.conf.d/docker-clean && \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && \
     apt-get install -qy --no-install-recommends \
         libgl1 libxkbcommon0 libegl1 libdbus-1-3 \
@@ -21,12 +10,9 @@ RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
 
 WORKDIR /app
 
-RUN python3 -m pip install poetry && \
-    poetry config virtualenvs.in-project true
-
-COPY pyproject.toml poetry.lock ./
-RUN --mount=type=cache,sharing=locked,target=/root/.cache/pypoetry \
-    poetry install --no-root
+COPY pyproject.toml pixi.lock ./
+RUN --mount=type=cache,target=/root/.cache/rattler \
+    pixi install
 
 COPY app app
-CMD ["poetry", "run", "python", "-c", "from app import main; main.main()"]
+CMD ["pixi", "run", "start"]

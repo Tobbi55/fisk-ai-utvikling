@@ -1,6 +1,7 @@
 """
-    This file contains the UI tests for the app.
-    """
+This file contains the UI tests for the app.
+"""
+
 import sys
 import unittest
 

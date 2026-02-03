@@ -1,4 +1,5 @@
 """Creates empty YOLO detection files for frames with no detections in it"""
+
 import argparse
 import os
 import pathlib

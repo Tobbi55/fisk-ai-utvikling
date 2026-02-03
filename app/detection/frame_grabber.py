@@ -1,4 +1,4 @@
-"""This module contains the ThreadedFrameGrabber class. """
+"""This module contains the ThreadedFrameGrabber class."""
 
 import math
 from concurrent.futures import ThreadPoolExecutor
@@ -9,7 +9,7 @@ from pathlib import Path
 from queue import Empty, Full, PriorityQueue
 from threading import Event, Thread
 from types import TracebackType
-from typing import Any, List, Optional, Tuple, Type
+from typing import Any
 
 import cv2
 import numpy as np
@@ -27,7 +27,7 @@ class BatchWrapper:
     """Wrapper for a batch of images."""
 
     index: int
-    data: Tuple[Tensor, List[np.ndarray[Any, Any]]]
+    data: tuple[Tensor, list[np.ndarray[Any, Any]]]
 
     def __lt__(self, other: "BatchWrapper") -> bool:
         """Less than operator for sorting batches."""
@@ -54,14 +54,14 @@ class ThreadedFrameGrabber:  # pylint: disable=too-many-instance-attributes
     num_workers: int = field(init=False)
     capture: cv2.VideoCapture = field(init=False)
     frame_count: int = field(init=False)
-    unprocessed_batch_queue: PriorityQueue[
-        Tuple[int, List[np.ndarray[Any, Any]]]
-    ] = field(init=False)
-    processed_batch_queue: PriorityQueue[Optional[BatchWrapper]] = field(init=False)
+    unprocessed_batch_queue: PriorityQueue[tuple[int, list[np.ndarray[Any, Any]]]] = (
+        field(init=False)
+    )
+    processed_batch_queue: PriorityQueue[BatchWrapper | None] = field(init=False)
     shutdown_flag: Event = field(init=False)
     batch_loader_thread: Thread = field(init=False)
     executor: ThreadPoolExecutor = field(init=False)
-    workers: List[Any] = field(init=False)
+    workers: list[Any] = field(init=False)
     frames_read: int = field(default=0)
     skipped_frames: int = field(default=0)
 
@@ -70,9 +70,9 @@ class ThreadedFrameGrabber:  # pylint: disable=too-many-instance-attributes
 
     def __exit__(
         self,
-        exc_type: Optional[Type[BaseException]],  # pylint: disable=unused-argument
-        exc_value: Optional[BaseException],  # pylint: disable=unused-argument
-        traceback: Optional[TracebackType],  # pylint: disable=unused-argument
+        exc_type: type[BaseException] | None,  # pylint: disable=unused-argument
+        exc_value: BaseException | None,  # pylint: disable=unused-argument
+        traceback: TracebackType | None,  # pylint: disable=unused-argument
     ) -> None:
         self.close()
 
@@ -103,7 +103,7 @@ class ThreadedFrameGrabber:  # pylint: disable=too-many-instance-attributes
     def read_next_frame(self) -> np.ndarray[Any, Any] | None:
         """Reads the next frame from the video file"""
         ret: bool
-        frame: Optional[np.ndarray[Any, Any]]
+        frame: np.ndarray[Any, Any] | None
         ret, frame = self.capture.read()
         while (
             not ret
@@ -118,7 +118,7 @@ class ThreadedFrameGrabber:  # pylint: disable=too-many-instance-attributes
         return None
 
     def __put_unprocessed_batch(
-        self, batch_index: int, batch: List[np.ndarray[Any, Any]]
+        self, batch_index: int, batch: list[np.ndarray[Any, Any]]
     ) -> bool:
         """Attempts to put a batch of frames into the unprocessed batch queue.
 
@@ -131,7 +131,7 @@ class ThreadedFrameGrabber:  # pylint: disable=too-many-instance-attributes
         """
 
         def try_put_unprocessed_batch(
-            batch_index: int, batch: List[np.ndarray[Any, Any]]
+            batch_index: int, batch: list[np.ndarray[Any, Any]]
         ) -> PutState:
             """Attempts to put a batch of frames into the unprocessed batch queue."""
             try:
@@ -157,7 +157,7 @@ class ThreadedFrameGrabber:  # pylint: disable=too-many-instance-attributes
 
     def batch_loader(self) -> None:
         """Loadds batches of frames into the unprocessed batch queue"""
-        batch: List[np.ndarray[Any, Any]] = []
+        batch: list[np.ndarray[Any, Any]] = []
         batch_index = 0
         while not self.shutdown_flag.is_set():
             frame: np.ndarray[Any, Any] | None = self.read_next_frame()
@@ -211,7 +211,7 @@ class ThreadedFrameGrabber:  # pylint: disable=too-many-instance-attributes
             math.ceil((self.frame_count - self.skipped_frames) / self.batch_size)
         )
 
-    def get_batch(self) -> Tuple[Tensor, List[np.ndarray[Any, Any]]] | None:
+    def get_batch(self) -> tuple[Tensor, list[np.ndarray[Any, Any]]] | None:
         """Returns the next batch of frames from the video file"""
         try:
             batch_wrapper = self.processed_batch_queue.get(timeout=5)

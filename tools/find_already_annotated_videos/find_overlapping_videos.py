@@ -9,9 +9,8 @@ from pathlib import Path
 
 import cv2
 import ffmpeg
-import numpy as np
 import tqdm
-from imagehash import dhash, phash
+from imagehash import phash
 from PIL import Image
 
 

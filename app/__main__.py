@@ -1,4 +1,5 @@
 """The REAL main"""
+
 import sys
 
 from .main import main

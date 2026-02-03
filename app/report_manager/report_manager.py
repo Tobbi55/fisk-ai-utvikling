@@ -1,7 +1,7 @@
 """Writes a detection report into chosen path"""
+
 import csv
 import os
-import typing
 from pathlib import Path
 from xml.dom import minidom
 
@@ -60,7 +60,7 @@ class ReportManager:
     def __get_save_path(self) -> Path:
         return self.output_path / (self.report_name + self.__get_extension())
 
-    def write_report(self, videos: typing.List[str]) -> None:
+    def write_report(self, videos: list[str]) -> None:
         """writes a report based on the list of videos entered"""
         if len(videos) == 0:
             logger.info("No videos to write a report for")
@@ -79,7 +79,7 @@ class ReportManager:
             case "XLSX":
                 self.write_xlsx_file(videos)
 
-    def write_xml_file(self, videos: typing.List[str]) -> None:
+    def write_xml_file(self, videos: list[str]) -> None:
         """Writes a report in the format of an xml file
 
         Args:
@@ -115,7 +115,7 @@ class ReportManager:
         ) as out:
             out.write(xml_str)
 
-    def write_csv_file(self, videos: typing.List[str]) -> None:
+    def write_csv_file(self, videos: list[str]) -> None:
         """Writes a report in the format of a csv file
 
         Args:
@@ -158,7 +158,7 @@ class ReportManager:
             )
             raise err
 
-    def write_pdf_file(self, videos: typing.List[str]) -> None:
+    def write_pdf_file(self, videos: list[str]) -> None:
         """Writes a report in the format of a pdf file
 
         Args:
@@ -190,7 +190,7 @@ class ReportManager:
         # opens the output pathway and saves the file
         pdf.output(str(self.__get_save_path()), "F")
 
-    def write_xlsx_file(self, videos: typing.List[str]) -> None:
+    def write_xlsx_file(self, videos: list[str]) -> None:
         """writes a report in the format of a xlsx file
 
         Args:

@@ -1,8 +1,10 @@
 """Detection module for running inference on video."""
+
 import threading
 import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable, List, Tuple
+from typing import Any
 
 import cv2
 import torch
@@ -45,10 +47,10 @@ def __create_video_writer(
 
 def __annotate_batch(
     vid_writer: cv2.VideoWriter,
-    results: List[torch.Tensor],
-    img0s: List[Any],
-    names: List[str],
-    colors: List[Tuple[int, int, int]],
+    results: list[torch.Tensor],
+    img0s: list[Any],
+    names: list[str],
+    colors: list[tuple[int, int, int]],
 ) -> None:
     """Annotates a batch of images and writes them to a video."""
 
@@ -70,10 +72,10 @@ def __annotate_batch(
 
 
 def __process_batch(
-    original_batch: List[Any],
+    original_batch: list[Any],
     processed_batch: torch.Tensor,
     model: BatchYolov8,
-) -> Tuple[List[torch.Tensor], float]:
+) -> tuple[list[torch.Tensor], float]:
     """Process a batch of frames.
 
     Args:
@@ -103,7 +105,7 @@ def process_video(
     output_path: Path | None,
     stop_event: threading.Event,
     notify_progress: Callable[[int], None] | None = None,
-) -> Tuple[List[int], List[torch.Tensor]]:
+) -> tuple[list[int], list[torch.Tensor]]:
     """Runs inference on a video.
     And returns a list of frames containing fish and a list of predictions for each frame.
 
@@ -139,7 +141,7 @@ def process_video(
         frame_count = 0
         processed_frames = 0
 
-        predictions_per_frame: List[torch.Tensor] = []
+        predictions_per_frame: list[torch.Tensor] = []
 
         with tqdm(
             total=frame_grabber.frame_count, desc="Processing frames", leave=False
@@ -214,8 +216,8 @@ def process_video(
 
 
 def detected_frames_to_ranges(
-    frames: List[int], frame_buffer: int
-) -> List[Tuple[int, int]]:
+    frames: list[int], frame_buffer: int
+) -> list[tuple[int, int]]:
     """Convert a list of detected frames to a list of ranges.
         Due to detection inaccuracies we need to allow for some dead frames
         without detections within a valid range.
@@ -229,7 +231,7 @@ def detected_frames_to_ranges(
     if len(frames) == 0:
         return []
 
-    frame_ranges: List[Tuple[int, int]] = []
+    frame_ranges: list[tuple[int, int]] = []
     start_frame = frames[0]
     end_frame = frames[0]
 
