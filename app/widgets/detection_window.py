@@ -221,15 +221,20 @@ class DetectionWorker(QThread):
             self.update_task_progress.emit(progress)
             self.update_time_prediction(int(progress / 2), video_num, num_videos)
 
-        frames_with_fish, tensors = detection.process_video(
-            model=self.model,
-            video_path=video_path,
-            batch_size=settings.batch_size,
-            max_batches_to_queue=4,
-            output_path=None,
-            stop_event=self.stop_event,
-            notify_progress=detection_notify_progress,
-        )
+        try:
+            frames_with_fish, tensors = detection.process_video(
+                model=self.model,
+                video_path=video_path,
+                batch_size=settings.batch_size,
+                max_batches_to_queue=4,
+                output_path=None,
+                stop_event=self.stop_event,
+                notify_progress=detection_notify_progress,
+            )
+        except RuntimeError as err:
+            self.log(f"Error processing video {video_path}: {err}")
+            self.add_log.emit(f"Skipping broken video: {video_path.name}")
+            return True  # Continue processing other videos
 
         # If the stop event is set, stop processing and return
         if self.stop_event.is_set():
