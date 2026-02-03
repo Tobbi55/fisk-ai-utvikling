@@ -10,6 +10,13 @@
             "request": "launch",
             "module": "app",
             "justMyCode": true
+        },
+        {
+            "name": "Python: VDI Perf Test",
+            "type": "python",
+            "request": "launch",
+            "module": "app.vdi_perf_test",
+            "justMyCode": true
         }
     ]
 }
