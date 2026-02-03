@@ -106,7 +106,6 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/7f/c7/fb42228bb05473d248c110218ffb8b1ad2f76728ed8699856e5af21112ad/ultralytics_thop-2.0.18-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/39/08/aaaad47bc4e9dc8c725e68f9d04865dbcb2052843ff09c97b08904852d84/urllib3-2.6.3-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/f7/3e/05ba2194cd5073602422859c949a4f21310a3c49bf8dccde9e03d4522b11/XlsxWriter-3.1.9-py3-none-any.whl
-      - pypi: ./
   dev:
     channels:
     - url: https://conda.anaconda.org/conda-forge/
@@ -243,7 +242,6 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/39/08/aaaad47bc4e9dc8c725e68f9d04865dbcb2052843ff09c97b08904852d84/urllib3-2.6.3-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/3c/c1/d73f12f8cdb1891334a2ccf7389eed244d3941e74d80dd220badb937f3fb/wcwidth-0.5.3-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/f7/3e/05ba2194cd5073602422859c949a4f21310a3c49bf8dccde9e03d4522b11/XlsxWriter-3.1.9-py3-none-any.whl
-      - pypi: ./
 packages:
 - conda: https://conda.anaconda.org/conda-forge/linux-64/_libgcc_mutex-0.1-conda_forge.tar.bz2
   sha256: fe51de6107f9edc7aa4f786a70f4a883943bc9d39b3bb7307c04c41410990726
@@ -294,29 +292,6 @@ packages:
   version: 12.3.0
   sha256: ef9066fd8d86548e12d587cbfe7b852159e48ff3c732271c3032668d4bd7c599
   requires_python: '>=3.8'
-- pypi: ./
-  name: bachelor-oppgave-nina
-  version: 0.1.1
-  sha256: af9c07477235b01407bb57a552d211463f4f084fe5689376f471effdf8475a5e
-  requires_dist:
-  - pyqt6~=6.5.0
-  - ultralytics~=8.2.0
-  - opencv-python-headless
-  - tqdm~=4.64.1
-  - ffmpeg-python~=0.2.0
-  - aspose-cells~=23.2.0
-  - aspose-cells-python~=23.2.0
-  - fpdf~=1.7.2
-  - torchvision>=0.25.0,<0.26
-  - xlsxwriter~=3.1.0
-  - av~=12.3.0
-  - ty==0.0.14 ; extra == 'dev'
-  - ruff>=0.1.0,<1.0.0 ; extra == 'dev'
-  - pytest>=7.2.2,<8.0.0 ; extra == 'dev'
-  - ipykernel>=6.22.0,<7.0.0 ; extra == 'dev'
-  - sympy>=1.11.1,<2.0.0 ; extra == 'dev'
-  requires_python: '>=3.10,<3.12'
-  editable: true
 - conda: https://conda.anaconda.org/conda-forge/linux-64/bzip2-1.0.8-hda65f42_8.conda
   sha256: c30daba32ddebbb7ded490f0e371eae90f51e72db620554089103b4a6934b0d5
   md5: 51a19bba1b8ebfb60df25cde030b7ebc
