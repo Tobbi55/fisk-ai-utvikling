@@ -1,11 +1,11 @@
 """Main file for our application"""
 
 import logging
-import os
 from logging.handlers import TimedRotatingFileHandler
+from pathlib import Path
 
 LOGGER_NAME = "log"
-LOG_PATH = "logs"
+LOG_PATH = Path("logs")
 
 
 def __create_file_handler(
@@ -17,15 +17,15 @@ def __create_file_handler(
         TimedRotatingFileHandler: The file handler
     """
     handler = TimedRotatingFileHandler(
-        f"{LOG_PATH}/{filename}",
+        LOG_PATH / filename,
         when="midnight",
         backupCount=10,
     )
 
-    # Set up custom naming for log files
-    def namer(default_name: str) -> str:
-        base_filename, ext, filedate = default_name.split(".")
-        return f"{base_filename}.{filedate}.{ext}"
+    # Rename rotated logs: logfile.log.03-02-2026 -> logfile.03-02-2026.log
+    def namer(name: str) -> str:
+        path = Path(name)
+        return str(path.parent / f"{Path(path.stem).stem}{path.suffix}.log")
 
     handler.suffix = "%d-%m-%Y"
     handler.namer = namer
@@ -58,9 +58,8 @@ def create_logger(level: int = logging.DEBUG, filename: str = "logfile.log") -> 
     logger = logging.getLogger(LOGGER_NAME)
     logger.setLevel(level)
 
-    # create directory for logfiles
-    if not os.path.exists(LOG_PATH):
-        os.makedirs(LOG_PATH)
+    # Create directory for logfiles
+    LOG_PATH.mkdir(exist_ok=True)
 
     # Sets midnight rotation for logger
     logger.addHandler(__create_file_handler(formatter, filename))
