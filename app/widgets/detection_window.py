@@ -274,13 +274,19 @@ class DetectionWorker(QThread):
 
         # Cut the video to the detected frames
         # TODO: implement the stop event for this function too
-        video_processor.cut_video(
-            video_path,
-            out_path,
-            frame_ranges,
-            dets,
-            notify_progress=cut_notify_progress,
-        )
+        try:
+            video_processor.cut_video(
+                video_path,
+                out_path,
+                frame_ranges,
+                dets,
+                notify_progress=cut_notify_progress,
+            )
+        except Exception as err:
+            self.log(f"Error cutting video {video_path}: {err}")
+            self.add_log.emit(f"Skipping video due to cutting error: {video_path.name}")
+            return True  # Continue processing other videos
+
         # Just show percentage at this point
         self.update_task_format.emit("%p%")
 
