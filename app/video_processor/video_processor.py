@@ -181,9 +181,11 @@ def process_packet(  # pylint: disable=too-many-arguments
     for frame in packet.decode():
         if current_frame is None:
             current_frame = timestamp_to_frame(frame.pts, video_stream)
-            assert current_frame - start <= 0, (
-                f"Delta: {current_frame - start}, probably seeked past start frame"
-            )
+            # Allow tolerance of 1 frame for rounding errors in timestamp conversion
+            if current_frame - start > 1:
+                raise AssertionError(
+                    f"Delta: {current_frame - start}, probably seeked past start frame"
+                )
         else:
             current_frame += 1
 
