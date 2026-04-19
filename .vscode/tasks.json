@@ -1,0 +1,114 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Pixi: Install (frozen)",
+      "type": "shell",
+      "command": "${env:HOME}/.pixi/bin/pixi",
+      "args": ["install", "--frozen"],
+      "options": {
+        "env": {
+          "UV_HTTP_TIMEOUT": "600",
+          "UV_HTTP_RETRIES": "5"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Pixi: Fetch Models",
+      "type": "shell",
+      "command": "${env:HOME}/.pixi/bin/pixi",
+      "args": ["run", "fetch-models"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Pixi: Start App (GUI)",
+      "type": "shell",
+      "command": "${env:HOME}/.pixi/bin/pixi",
+      "args": ["run", "start"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Pixi: Start App (Codespaces VNC)",
+      "type": "shell",
+      "command": "${env:HOME}/.pixi/bin/pixi",
+      "args": ["run", "python", "-m", "app", "-platform", "vnc"],
+      "dependsOn": ["Codespaces: Stop VNC"],
+      "dependsOrder": "sequence",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Pixi: Start App (Offscreen / Smoke Test)",
+      "type": "shell",
+      "command": "${env:HOME}/.pixi/bin/pixi",
+      "args": [
+        "run",
+        "python",
+        "-c",
+        "import os; os.environ.setdefault('QT_QPA_PLATFORM','offscreen'); from PyQt6.QtWidgets import QApplication; from app.main import MainWindow; app=QApplication([]); w=MainWindow(); w.close(); app.quit(); print('GUI init OK (offscreen)')"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Codespaces: Install noVNC",
+      "type": "shell",
+      "command": "sudo",
+      "args": [
+        "bash",
+        "-lc",
+        "apt-get update && apt-get install -y --no-install-recommends novnc websockify"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Codespaces: Start noVNC (Browser)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "websockify --web=/usr/share/novnc/ 6080 localhost:5900"
+      ],
+      "dependsOn": ["Codespaces: Stop noVNC"],
+      "dependsOrder": "sequence",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Codespaces: Start GUI in Browser (noVNC)",
+      "dependsOn": [
+        "Codespaces: Stop GUI servers",
+        "Pixi: Start App (Codespaces VNC)",
+        "Codespaces: Start noVNC (Browser)"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "Codespaces: Stop VNC",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "pkill -f \"python -m app -platform vnc\" 2>/dev/null || true; echo \"Stopped VNC (if any)\""
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Codespaces: Stop noVNC",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "pkill -f \"websockify --web=/usr/share/novnc/ 6080 localhost:5900\" 2>/dev/null || true; pkill -f \"websockify.*6080.*5900\" 2>/dev/null || true; echo \"Stopped noVNC/websockify (if any)\""
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Codespaces: Stop GUI servers",
+      "dependsOn": ["Codespaces: Stop noVNC", "Codespaces: Stop VNC"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    }
+  ]
+}

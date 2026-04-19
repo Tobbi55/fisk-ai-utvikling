@@ -77,6 +77,7 @@ start = { cmd = "python -m app", env = { LD_LIBRARY_PATH = "$CONDA_PREFIX/lib:$L
 fetch-models = "wget -nc -P data/models -i models.txt"
 vdi-perf-test = "python -m app.vdi_perf_test"
 test = "python -m app.vdi_perf_test"
+export-review-yolo = "python tools/generate_dataset/export_review_to_yolo.py"
 [tool.pixi.dependencies]
 xcb-util-cursor = "*"
 

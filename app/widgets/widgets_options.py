@@ -262,11 +262,10 @@ def add_label(title: str, tooltip_text: str) -> QLabel:
     label = QLabel()
     label.setText(title)
     label.setToolTip(tooltip_text)
-    label.setFont(QtGui.QFont("Arial", weight=QtGui.QFont.Weight.Bold, pointSize=10))
+    font = label.font()
+    font.setBold(True)
+    label.setFont(font)
     label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
-    label.setStyleSheet(
-        """QToolTip { color: #000000; background-color: #ffffff; border: 1px solid white; }"""
-    )
     return label
 
 

@@ -25,7 +25,12 @@ MODEL_NAMES = [
 BATCH_SIZES = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
 # BATCH_SIZES = [1024]
 
-DEVICE = "cuda:0"
+try:
+    import torch
+
+    DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
+except Exception:  # pylint: disable=broad-except
+    DEVICE = "cpu"
 
 VIDEO_INPUT = Path("data/input.mp4")
 VIDEO_OUTPUT = Path("data/output.mp4")

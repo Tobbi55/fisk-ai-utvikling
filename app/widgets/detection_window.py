@@ -1,6 +1,7 @@
 """Detection window widget."""
 
 import io
+import json
 import os
 import threading
 import time
@@ -70,11 +71,29 @@ class DetectionWorker(QThread):
         """Run the detection."""
 
         if self.model is None:
-            self.log(f"Initializing the model using {settings.weights}...")
-            self.model = BatchYolov8(
-                Common.weights_folder / settings.weights,
-                "cuda:0",
+            weights_path = Common.weights_folder / settings.weights
+            preferred_device = "cuda:0" if torch.cuda.is_available() else "cpu"
+            self.log(
+                f"Initializing the model using {settings.weights} on {preferred_device}..."
             )
+
+            try:
+                self.model = BatchYolov8(
+                    weights_path,
+                    preferred_device,
+                )
+            except RuntimeError as err:
+                # Make it easy to run in environments without CUDA (e.g. Codespaces)
+                if preferred_device != "cpu":
+                    self.log(
+                        f"Failed to initialize on {preferred_device}: {err}. Falling back to CPU..."
+                    )
+                    self.model = BatchYolov8(
+                        weights_path,
+                        "cpu",
+                    )
+                else:
+                    raise
         stream_target = io.StringIO()
         with redirect_stdout(stream_target):
             self.process_folder()
@@ -154,6 +173,67 @@ class DetectionWorker(QThread):
                     )
                 )
         return detections
+
+    def __write_review_sidecars(
+        self,
+        output_video_path: Path,
+        source_video_path: Path,
+        frame_ranges: list[tuple[int, int]],
+        predictions: dict[int, list[Detection]],
+    ) -> None:
+        """Write sidecar JSON files used for reviewing detections on the processed video."""
+
+        mapping: list[int] = []
+        for start, end in frame_ranges:
+            mapping.extend(range(int(start), int(end) + 1))
+
+        mapping_path = output_video_path.with_suffix(".mapping.json")
+        predictions_path = output_video_path.with_suffix(".predictions.json")
+
+        mapping_payload = {
+            "version": 1,
+            "source_video": source_video_path.name,
+            "processed_video": output_video_path.name,
+            "frame_ranges": [[int(s), int(e)] for s, e in frame_ranges],
+            "output_to_original": mapping,
+        }
+
+        # Store only frames that have at least one detection to keep files small.
+        pred_payload: dict[str, list[dict[str, object]]] = {}
+        for frame, dets in predictions.items():
+            if not dets:
+                continue
+            pred_payload[str(int(frame))] = [
+                {
+                    "label": d.label,
+                    "confidence": float(d.confidence),
+                    "xmin": int(d.xmin),
+                    "ymin": int(d.ymin),
+                    "xmax": int(d.xmax),
+                    "ymax": int(d.ymax),
+                }
+                for d in dets
+            ]
+
+        predictions_payload = {
+            "version": 1,
+            "source_video": source_video_path.name,
+            "processed_video": output_video_path.name,
+            "weights": settings.weights,
+            "predictions": pred_payload,
+        }
+
+        try:
+            mapping_path.write_text(
+                json.dumps(mapping_payload, indent=2, sort_keys=True),
+                encoding="utf-8",
+            )
+            predictions_path.write_text(
+                json.dumps(predictions_payload, indent=2, sort_keys=True),
+                encoding="utf-8",
+            )
+        except OSError as err:
+            self.log(f"Could not write review sidecars: {err}")
 
     def __add_buffer_to_ranges(
         self, frame_ranges: list[tuple[int, int]], video_path: Path
@@ -261,9 +341,10 @@ class DetectionWorker(QThread):
         vid_path = Path(video_path)
         out_path = self.output_folder_path / f"{vid_path.stem}_processed.mp4"
 
-        dets = None
-        if settings.box_around_fish:
-            dets = self.tensors_to_predictions(tensors)
+        # Convert tensors to per-frame predictions (used for optional overlay and for review).
+        predictions = self.tensors_to_predictions(tensors)
+
+        dets = predictions if settings.box_around_fish else None
 
         self.update_task_progress.emit(0)
         self.update_task_format.emit("Cutting video: %p%")
@@ -286,6 +367,14 @@ class DetectionWorker(QThread):
             self.log(f"Error cutting video {video_path}: {err}")
             self.add_log.emit(f"Skipping video due to cutting error: {video_path.name}")
             return True  # Continue processing other videos
+
+        # Persist sidecar files for later review on the processed video.
+        self.__write_review_sidecars(
+            output_video_path=out_path,
+            source_video_path=video_path,
+            frame_ranges=frame_ranges,
+            predictions=predictions,
+        )
 
         # Just show percentage at this point
         self.update_task_format.emit("%p%")
